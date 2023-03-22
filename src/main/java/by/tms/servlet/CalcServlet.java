@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @WebServlet(value = "/calc", name = "CalcServlet")
 public class CalcServlet extends HttpServlet {
-    CalculatorService calculatorService = new CalculatorService();
+    private final CalculatorService calculatorService = new CalculatorService();
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
