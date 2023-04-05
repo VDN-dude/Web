@@ -1,6 +1,7 @@
 package by.tms.servlet;
 
 import by.tms.entity.Operation;
+import by.tms.entity.User;
 import by.tms.service.CalculatorService;
 
 import javax.servlet.ServletException;
@@ -12,12 +13,13 @@ import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-@WebServlet("/calc/history")
+@WebServlet("/calchistory")
 public class CalcHistoryServlet extends HttpServlet {
     private final CalculatorService calculatorService = new CalculatorService();
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        List<Operation> operationList = calculatorService.findAll();
+        User user = (User) req.getSession().getAttribute("user");
+        List<Operation> operationList = calculatorService.findUserOperations(user.getUsername());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss yyyy-MM-dd");
         StringBuilder operationBuilder = new StringBuilder();
 
@@ -28,6 +30,9 @@ public class CalcHistoryServlet extends HttpServlet {
         }
 
         String history = operationBuilder.toString();
-        resp.getWriter().print(history);
+        String[] splitHistory = history.split("\n");
+        req.setAttribute("splitHistory", splitHistory);
+        req.getRequestDispatcher("/pages/calchistory.jsp").forward(req, resp);
     }
+
 }
