@@ -2,7 +2,9 @@ package by.tms.servlet;
 
 import by.tms.entity.Operation;
 import by.tms.entity.OperationType;
+import by.tms.entity.User;
 import by.tms.service.CalculatorService;
+import by.tms.validator.CalculatorValidator;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -12,19 +14,39 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Optional;
 
-@WebServlet(value = "/calc", name = "CalcServlet")
+@WebServlet(name = "CalcServlet", urlPatterns = "/calc")
 public class CalcServlet extends HttpServlet {
+    private String username = "guest";
+    private final CalculatorValidator validator = new CalculatorValidator();
     private final CalculatorService calculatorService = new CalculatorService();
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.getRequestDispatcher("/pages/calc.jsp").forward(req, resp);
+    }
 
-        double dNum1 = Double.parseDouble(req.getParameter("num1"));
-        double dNum2 = Double.parseDouble(req.getParameter("num2"));
-        OperationType opType = OperationType.valueOf(req.getParameter("type").toUpperCase());
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String num1 = req.getParameter("num1");
+        String num2 = req.getParameter("num2");
+        String type = req.getParameter("type");
 
-        Operation operation = new Operation(dNum1, dNum2, opType);
-        Optional<Operation> result = calculatorService.calculate(operation);
+        if (validator.isValidNum(num1) & validator.isValidNum(num2) & validator.isValidOperationType(type.toUpperCase())) {
+            double dNum1 = Double.parseDouble(num1);
+            double dNum2 = Double.parseDouble(num2);
+            OperationType opType = OperationType.valueOf(type.toUpperCase());
+            if (req.getSession().getAttribute("user") != null) {
+                User user = (User) req.getSession().getAttribute("user");
+                username = user.getUsername();
+            }
+            Operation operation = new Operation(dNum1, dNum2, opType, username);
+            Optional<Operation> result = calculatorService.calculate(operation);
 
-        resp.getWriter().print("Result " + result.get().getResult());
+            req.setAttribute("result", result.get().getResult());
+            req.getRequestDispatcher("/pages/calc.jsp").forward(req, resp);
+        } else {
+            req.setAttribute("calcMessage", "Numbers inputted wrong, please try again");
+            req.getRequestDispatcher("/pages/calc.jsp").forward(req, resp);
+        }
     }
 }
