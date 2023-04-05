@@ -9,13 +9,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class JDBCOperationStorage implements OperationStorage{
+public class JDBCOperationStorage{
     private final Connection connection;
     private static final String POSTGRESQL_USER = "postgres";
     private static final String POSTGRESQL_URL = "jdbc:postgresql://localhost:5432/postgres";
     private static final String POSTGRESQL_PASSWORD = "0314";
-    private static final String SELECT_ALL_OPERATIONS = "select * from operation";
-    private static final String WRITE_OPERATION = "insert into operation(num1, type, num2, result, time) values (?, ?, ?, ?, ?)";
+    private static final String SELECT_USER_OPERATIONS = "select * from operation where username = ?";
+    private static final String WRITE_OPERATION = "insert into operation(num1, type, num2, result, time, username) values (?, ?, ?, ?, ?, ?)";
 
     public JDBCOperationStorage() {
         try {
@@ -25,7 +25,6 @@ public class JDBCOperationStorage implements OperationStorage{
         }
     }
 
-    @Override
     public void save(Operation operation) {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(WRITE_OPERATION);
@@ -34,17 +33,18 @@ public class JDBCOperationStorage implements OperationStorage{
             preparedStatement.setDouble(3, operation.getNum2());
             preparedStatement.setDouble(4, operation.getResult());
             preparedStatement.setTimestamp(5, Timestamp.valueOf(operation.getTime()));
+            preparedStatement.setString(6, operation.getUsername());
             preparedStatement.execute();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
-    @Override
-    public List<Operation> findAll() {
+    public List<Operation> findUserOperations(String username) {
         try {
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(SELECT_ALL_OPERATIONS);
+            PreparedStatement preparedStatement = connection.prepareStatement(SELECT_USER_OPERATIONS);
+            preparedStatement.setString(1, username);
+            ResultSet resultSet = preparedStatement.executeQuery();
             List<Operation> operationList = new ArrayList<>();
             while (resultSet.next()){
                 int id = resultSet.getInt(1);
