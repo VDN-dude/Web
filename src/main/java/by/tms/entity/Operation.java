@@ -2,18 +2,20 @@ package by.tms.entity;
 
 import java.time.LocalDateTime;
 
-public class Operation implements Comparable<Operation>{
+public class Operation implements Comparable<Operation> {
     private int id;
     private final double num1;
     private final double num2;
     private final OperationType type;
     private double result;
     private LocalDateTime time;
+    private String username;
 
-    public Operation(double num1, double num2, OperationType type){
+    public Operation(double num1, double num2, OperationType type, String username) {
         this.num1 = num1;
         this.num2 = num2;
         this.type = type;
+        this.username = username;
 
     }
 
@@ -50,9 +52,13 @@ public class Operation implements Comparable<Operation>{
         return time;
     }
 
-        public Operation setResult(double result) {
+    public Operation setResult(double result) {
         this.result = result;
         return this;
+    }
+
+    public String getUsername() {
+        return username;
     }
 
     public void setTime(LocalDateTime time) {
@@ -63,7 +69,7 @@ public class Operation implements Comparable<Operation>{
     public int compareTo(Operation o) {
         if (this.getTime().isBefore(o.getTime())) {
             return 1;
-        } else if (this.getTime().isAfter(o.getTime())){
+        } else if (this.getTime().isAfter(o.getTime())) {
             return -1;
         }
         return 0;
