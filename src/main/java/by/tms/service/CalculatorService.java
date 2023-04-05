@@ -50,4 +50,5 @@ public class CalculatorService {
    public List<Operation> findUserOperations(String username){
       return storage.findUserOperations(username);
    }
+
 }
