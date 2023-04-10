@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%--
   Created by IntelliJ IDEA.
   User: garan
@@ -11,32 +12,43 @@
     <title>Register</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-aFq/bzH65dt+w6FI2ooMVUpc+21e0SRygnTpmBvdBgSdnuTN7QbdgL+OapgHtvPp" crossorigin="anonymous">
+    <link rel="stylesheet" href="valid.css">
 </head>
 <body>
 <jsp:include page="header.jsp"/>
 <div class="container">
-    <form class="mt-3" action="/register" method="post">
+    <form class="mt-3 needs-validation" action="/register" method="post">
         <div class="row mb-3">
             <div class="col">
-                <label for="exampleInputEmail1" class="form-label">First name</label>
-                <input name="firstName" type="text" class="form-control" aria-label="First name">
+                <label for="Firstname" class="form-label">First name</label>
+                <input name="firstName" type="text" class="form-control" id="Firstname" required pattern="([A-Za-z])*">
             </div>
             <div class="col">
-                <label for="exampleInputEmail1" class="form-label">Last name</label>
-                <input name="lastName" type="text" class="form-control" aria-label="Last name">
+                <label for="Lastname" class="form-label">Last name</label>
+                <input name="lastName" type="text" class="form-control" id="Lastname" required pattern="([A-Za-z])*">
             </div>
         </div>
         <div class="mb-3">
-            <label for="exampleInputEmail1" class="form-label">Email address</label>
-            <input name="email" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+            <label for="Email" class="form-label">Email address</label>
+            <input name="email" type="email" class="form-control" id="Email" required pattern="^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$">
+            <c:if test="${emailUsed != null}">
+                <div class="alert alert-danger" role="alert">
+                        ${emailUsed}
+                </div>
+            </c:if>
         </div>
         <div class="mb-3">
-            <label for="exampleInputPassword1" class="form-label">Username</label>
-            <input name="username" type="text" class="form-control" id="username">
+            <label for="Username" class="form-label">Username</label>
+            <input name="username" type="text" class="form-control" id="Username" required pattern="\w*">
+            <c:if test="${usernameUsed != null}">
+                <div class="alert alert-danger" role="alert">
+                        ${usernameUsed}
+                </div>
+            </c:if>
         </div>
         <div class="mb-3">
-            <label for="exampleInputPassword1" class="form-label">Password</label>
-            <input name="password" type="password" class="form-control" id="exampleInputPassword1">
+            <label for="Password" class="form-label">Password</label>
+            <input name="password" type="password" class="form-control" id="Password" required pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$">
         </div>
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
