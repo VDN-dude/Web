@@ -8,7 +8,6 @@ import javax.servlet.annotation.WebListener;
 public class CalcListener implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-        System.out.println("yes");
         try {
             Class.forName("org.postgresql.Driver");
         } catch (ClassNotFoundException e) {
