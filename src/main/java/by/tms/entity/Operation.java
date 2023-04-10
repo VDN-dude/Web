@@ -3,33 +3,37 @@ package by.tms.entity;
 import java.time.LocalDateTime;
 
 public class Operation implements Comparable<Operation> {
-    private int id;
-    private final double num1;
-    private final double num2;
-    private final OperationType type;
+    private int operationId;
+    protected double num1;
+    protected double num2;
     private double result;
+    private OperationType type;
+    private int userId;
     private LocalDateTime time;
-    private String username;
 
-    public Operation(double num1, double num2, OperationType type, String username) {
-        this.num1 = num1;
-        this.num2 = num2;
-        this.type = type;
-        this.username = username;
-
-    }
-
-    public Operation(int id, double num1, OperationType type, double num2, double result, LocalDateTime time) {
-        this.id = id;
+    public Operation(int operationId, double num1, double num2, OperationType type, double result, int userId, LocalDateTime time) {
+        this.operationId = operationId;
         this.num1 = num1;
         this.num2 = num2;
         this.result = result;
         this.type = type;
+        this.userId = userId;
         this.time = time;
     }
 
-    public int getId() {
-        return id;
+    public Operation(int operationId, double num1, double num2, OperationType type, double result, LocalDateTime time) {
+        this.operationId = operationId;
+        this.num1 = num1;
+        this.num2 = num2;
+        this.type = type;
+        this.result = result;
+        this.time = time;
+    }
+
+    public Operation(double num1, double num2, int userId) {
+        this.num1 = num1;
+        this.num2 = num2;
+        this.userId = userId;
     }
 
     public double getNum1() {
@@ -48,6 +52,10 @@ public class Operation implements Comparable<Operation> {
         return type;
     }
 
+    public int getUserId() {
+        return userId;
+    }
+
     public LocalDateTime getTime() {
         return time;
     }
@@ -57,12 +65,25 @@ public class Operation implements Comparable<Operation> {
         return this;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
     public void setTime(LocalDateTime time) {
         this.time = time;
+    }
+
+    public void setType(OperationType type) {
+        this.type = type;
+    }
+
+    @Override
+    public String toString() {
+        return "Operation{" +
+                "operationId=" + operationId +
+                ", num1=" + num1 +
+                ", num2=" + num2 +
+                ", result=" + result +
+                ", type=" + type +
+                ", userId=" + userId +
+                ", time=" + time +
+                '}';
     }
 
     @Override
@@ -74,4 +95,5 @@ public class Operation implements Comparable<Operation> {
         }
         return 0;
     }
+
 }
