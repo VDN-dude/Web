@@ -4,14 +4,18 @@ import by.tms.entity.User;
 import by.tms.storage.JDBCUserStorage;
 import by.tms.storage.UserStorage;
 
-public class UserService extends JDBCUserStorage{
-    private final UserStorage storage = new JDBCUserStorage();
+import java.util.Optional;
 
-    public void save(User user){
-        storage.save(user);
+public class UserService extends JDBCUserStorage{
+
+    @Override
+    public void save(User user) {
+        super.save(user);
     }
-    public java.util.Optional<User> findByEmail(String email){
-        return storage.findByEmail(email);
+
+    @Override
+    public Optional<User> findByEmail(String email) {
+        return super.findByEmail(email);
     }
 
     @Override
