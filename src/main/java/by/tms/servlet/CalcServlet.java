@@ -3,7 +3,7 @@ package by.tms.servlet;
 import by.tms.entity.Operation;
 import by.tms.entity.OperationType;
 import by.tms.entity.User;
-import by.tms.service.CalculatorService;
+import by.tms.service.*;
 import by.tms.validator.CalculatorValidator;
 
 import javax.servlet.ServletException;
@@ -16,7 +16,8 @@ import java.util.Optional;
 
 @WebServlet(name = "CalcServlet", urlPatterns = "/calc")
 public class CalcServlet extends HttpServlet {
-    private String username = "guest";
+    private double result;
+    private int userId;
     private final CalculatorValidator validator = new CalculatorValidator();
     private final CalculatorService calculatorService = new CalculatorService();
 
@@ -31,18 +32,31 @@ public class CalcServlet extends HttpServlet {
         String num2 = req.getParameter("num2");
         String type = req.getParameter("type");
 
-        if (validator.isValidNum(num1) & validator.isValidNum(num2) & validator.isValidOperationType(type.toUpperCase())) {
+        if (validator.isValidNum(num1) & validator.isValidNum(num2)) {
             double dNum1 = Double.parseDouble(num1);
             double dNum2 = Double.parseDouble(num2);
             OperationType opType = OperationType.valueOf(type.toUpperCase());
             if (req.getSession().getAttribute("user") != null) {
                 User user = (User) req.getSession().getAttribute("user");
-                username = user.getUsername();
+                userId = user.getUserId();
             }
-            Operation operation = new Operation(dNum1, dNum2, opType, username);
-            Optional<Operation> result = calculatorService.calculate(operation);
+            Operation operation = new Operation(dNum1, dNum2, userId);
+            switch (opType){
+                case SUM:
+                    result = calculatorService.calculate(new SumOperation(operation));
+                    break;
+                case SUB:
+                    result = calculatorService.calculate(new SubOperation(operation));
+                    break;
+                case MUL:
+                    result = calculatorService.calculate(new MulOperation(operation));
+                    break;
+                case DIV:
+                    result = calculatorService.calculate(new DivOperation(operation));
+                    break;
+            }
 
-            req.setAttribute("result", result.get().getResult());
+            req.setAttribute("result", result);
             req.getRequestDispatcher("/pages/calc.jsp").forward(req, resp);
         } else {
             req.setAttribute("calcMessage", "Numbers inputted wrong, please try again");
