@@ -18,7 +18,7 @@ public class CalcHistoryServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         User user = (User) req.getSession().getAttribute("user");
-        List<Operation> operationList = calculatorService.findUserOperations(user.getUserId());
+        List<Operation> operationList = calculatorService.findByUserId(user.getUserId());
         req.setAttribute("operationList", operationList);
 
         req.getRequestDispatcher("/pages/calchistory.jsp").forward(req, resp);
