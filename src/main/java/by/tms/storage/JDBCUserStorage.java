@@ -7,6 +7,7 @@ import java.sql.*;
 import java.util.Optional;
 
 public class JDBCUserStorage implements UserStorage{
+    private static JDBCUserStorage instance;
     private final Connection connection;
     private static final String POSTGRESQL_USER = "postgres";
     private static final String POSTGRESQL_URL = "jdbc:postgresql://localhost:5432/postgres";
@@ -14,12 +15,18 @@ public class JDBCUserStorage implements UserStorage{
     private static final String SELECT_ALL_USERS = "select * from users";
     private static final String WRITE_USER = "insert into users(firstname, lastname, email, username, password) values (?, ?, ?, ?, ?)";
 
-    public JDBCUserStorage() {
+    private JDBCUserStorage() {
         try {
             this.connection = DriverManager.getConnection(POSTGRESQL_URL, POSTGRESQL_USER, POSTGRESQL_PASSWORD);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+    public static JDBCUserStorage getInstance(){
+        if (instance == null){
+            instance = new JDBCUserStorage();
+        }
+        return instance;
     }
 
     public void save(User user) {

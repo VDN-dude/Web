@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @WebServlet("/login")
 public class LogInServlet extends HttpServlet {
-    private final UserService service = new UserService();
+    private final UserService service = UserService.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

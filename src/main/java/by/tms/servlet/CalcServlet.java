@@ -19,7 +19,7 @@ public class CalcServlet extends HttpServlet {
     private double result;
     private int userId;
     private final CalculatorValidator validator = new CalculatorValidator();
-    private final CalculatorService calculatorService = new CalculatorService();
+    private final CalculatorService calculatorService = CalculatorService.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

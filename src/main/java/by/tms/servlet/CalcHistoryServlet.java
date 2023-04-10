@@ -14,7 +14,7 @@ import java.util.List;
 
 @WebServlet("/calchistory")
 public class CalcHistoryServlet extends HttpServlet {
-    private final CalculatorService calculatorService = new CalculatorService();
+    private final CalculatorService calculatorService = CalculatorService.getInstance();
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         User user = (User) req.getSession().getAttribute("user");

@@ -8,7 +8,7 @@ import by.tms.storage.OperationStorage;
 import java.time.LocalDateTime;
 
 public class MulOperation implements CalculatorOperation {
-    private final OperationStorage storage = new JDBCOperationStorage();
+    private final OperationStorage storage = JDBCOperationStorage.getInstance();
     private final Operation operation;
 
     public MulOperation(Operation operation) {

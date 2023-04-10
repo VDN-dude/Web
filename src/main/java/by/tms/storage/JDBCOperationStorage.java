@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class JDBCOperationStorage implements OperationStorage{
+    private static JDBCOperationStorage instance;
     private final Connection connection;
     private static final String POSTGRESQL_USER = "postgres";
     private static final String POSTGRESQL_URL = "jdbc:postgresql://localhost:5432/postgres";
@@ -17,12 +18,19 @@ public class JDBCOperationStorage implements OperationStorage{
     private static final String SELECT_USER_OPERATIONS = "select * from operation where userid = ?";
     private static final String WRITE_OPERATION = "insert into operation(num1, type, num2, result, time, userid) values (?, ?, ?, ?, ?, ?)";
 
-    public JDBCOperationStorage() {
+    private JDBCOperationStorage(){
         try {
             this.connection = DriverManager.getConnection(POSTGRESQL_URL, POSTGRESQL_USER, POSTGRESQL_PASSWORD);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static JDBCOperationStorage getInstance() {
+        if (instance == null) {
+            instance = new JDBCOperationStorage();
+        }
+        return instance;
     }
     @Override
     public void save(Operation operation) {

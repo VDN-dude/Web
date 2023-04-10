@@ -7,7 +7,17 @@ import by.tms.storage.UserStorage;
 import java.util.Optional;
 
 public class UserService{
-    private final UserStorage storage = new JDBCUserStorage();
+    private static UserService instance;
+    private final UserStorage storage = JDBCUserStorage.getInstance();
+    private UserService(){
+
+    }
+    public static UserService getInstance(){
+        if (instance == null){
+            instance = new UserService();
+        }
+        return instance;
+    }
 
     public void save(User user) {
         storage.save(user);
