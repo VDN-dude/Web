@@ -26,11 +26,16 @@ public class RegisterServlet extends HttpServlet {
         String username = req.getParameter("username");
         String email = req.getParameter("email");
         String password = req.getParameter("password");
-
-        User user = new User(firstName, lastName, username, email, password);
-
-        service.save(user);
-
-        resp.sendRedirect("/");
+        if (service.checkEmail(email)) {
+            req.setAttribute("emailUsed", "this email already in used");
+            req.getRequestDispatcher("/pages/reg.jsp").forward(req, resp);
+        } else if (service.checkUsername(username)){
+            req.setAttribute("usernameUsed", "this username already in used");
+            req.getRequestDispatcher("/pages/reg.jsp").forward(req, resp);
+        } else {
+            User user = new User(firstName, lastName, username, email, password);
+            service.save(user);
+            resp.sendRedirect("/");
+        }
     }
 }
