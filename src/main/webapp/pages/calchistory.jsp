@@ -23,7 +23,7 @@
                 <fmt:parseDate value="${operation.time}" var="parsedTime" pattern="yyyy-MM-dd'T'HH:mm" type="date"/>
                 <fmt:formatDate value="${parsedTime}" pattern="dd.MM.yyyy HH:mm" var="formattedTime"/>
                 <li>
-                    <c:out value="${operation.num1} ${operation.type} ${operation.num2} result ${operation.getResult()} - time: ${formattedTime}"/>
+                    <c:out value="${operation.num1} ${operation.type} ${operation.num2} result ${operation.result} - time: ${formattedTime}"/>
                 </li>
             </c:forEach>
         </ul>
