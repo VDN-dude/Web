@@ -4,8 +4,8 @@ import java.time.LocalDateTime;
 
 public class Operation implements Comparable<Operation> {
     private int operationId;
-    protected double num1;
-    protected double num2;
+    private double num1;
+    private double num2;
     private double result;
     private OperationType type;
     private int userId;
