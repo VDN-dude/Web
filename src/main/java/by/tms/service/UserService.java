@@ -6,25 +6,22 @@ import by.tms.storage.UserStorage;
 
 import java.util.Optional;
 
-public class UserService extends JDBCUserStorage{
+public class UserService{
+    private final UserStorage storage = new JDBCUserStorage();
 
-    @Override
     public void save(User user) {
-        super.save(user);
+        storage.save(user);
     }
 
-    @Override
     public Optional<User> findByEmail(String email) {
-        return super.findByEmail(email);
+        return storage.findByEmail(email);
     }
 
-    @Override
     public boolean checkEmail(String email) {
-        return super.checkEmail(email);
+        return storage.checkEmail(email);
     }
 
-    @Override
     public boolean checkUsername(String username) {
-        return super.checkUsername(username);
+        return storage.checkUsername(username);
     }
 }

@@ -7,14 +7,14 @@ import by.tms.storage.OperationStorage;
 
 import java.util.List;
 
-public class CalculatorService extends JDBCOperationStorage{
+public class CalculatorService {
+   private final OperationStorage storage = new JDBCOperationStorage();
    public double calculate(CalculatorOperation operation){
       operation.process();
       return operation.getFinalResult();
    }
-   @Override
    public List<Operation> findByUserId(int userId) {
-      return super.findByUserId(userId);
+      return storage.findByUserId(userId);
    }
 
 }
