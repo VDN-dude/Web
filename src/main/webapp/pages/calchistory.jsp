@@ -1,3 +1,4 @@
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%--
   Created by IntelliJ IDEA.
   User: garan
@@ -17,11 +18,15 @@
 <jsp:include page="header.jsp"/>
 <div class="container">
     <div class="row justify-text-center">
-        <div class="row text-start">
-            <c:forEach var="operation" items="${splitHistory}">
-                <h3>${operation}</h3>
+        <ul>
+            <c:forEach items="${operationList}" var="operation">
+                <fmt:parseDate value="${operation.time}" var="parsedTime" pattern="yyyy-MM-dd'T'HH:mm" type="date"/>
+                <fmt:formatDate value="${parsedTime}" pattern="dd.MM.yyyy HH:mm" var="formattedTime"/>
+                <li>
+                    <c:out value="${operation.num1} ${operation.type} ${operation.num2} result ${operation.getResult()} - time: ${formattedTime}"/>
+                </li>
             </c:forEach>
-        </div>
+        </ul>
     </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/js/bootstrap.bundle.min.js"
