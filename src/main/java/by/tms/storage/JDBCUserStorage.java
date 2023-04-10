@@ -6,7 +6,7 @@ import by.tms.entity.User;
 import java.sql.*;
 import java.util.Optional;
 
-public class JDBCUserStorage{
+public class JDBCUserStorage implements UserStorage{
     private final Connection connection;
     private static final String POSTGRESQL_USER = "postgres";
     private static final String POSTGRESQL_URL = "jdbc:postgresql://localhost:5432/postgres";
@@ -56,5 +56,26 @@ public class JDBCUserStorage{
             throw new RuntimeException(e);
         }
         return Optional.empty();
+    }
+
+    public boolean checkEmail(String email){
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_USERS + " where email = ?");
+            preparedStatement.setString(1, email);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            return resultSet.next();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public boolean checkUsername(String username){
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_USERS + " where username = ?");
+            preparedStatement.setString(1, username);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            return resultSet.next();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
