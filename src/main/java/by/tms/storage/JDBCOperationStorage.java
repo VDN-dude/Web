@@ -2,6 +2,7 @@ package by.tms.storage;
 
 import by.tms.entity.Operation;
 import by.tms.entity.OperationType;
+import by.tms.util.ConnectionJDBC;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -9,21 +10,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class JDBCOperationStorage implements OperationStorage{
+public class JDBCOperationStorage implements OperationStorage {
     private static JDBCOperationStorage instance;
-    private final Connection connection;
-    private static final String POSTGRESQL_USER = "postgres";
-    private static final String POSTGRESQL_URL = "jdbc:postgresql://localhost:5432/postgres";
-    private static final String POSTGRESQL_PASSWORD = "0314";
-    private static final String SELECT_USER_OPERATIONS = "select * from operation where userid = ?";
-    private static final String WRITE_OPERATION = "insert into operation(num1, type, num2, result, time, userid) values (?, ?, ?, ?, ?, ?)";
+    private final List<String> tables = new ArrayList<>();
+    private final ConnectionJDBC connectionJDBC = new ConnectionJDBC();
+    private static final String SELECT_USER_OPERATIONS = " where userid = ?";
+    private static final String WRITE_OPERATION = " (num1, type, num2, result, time, userid) values (?, ?, ?, ?, ?, ?)";
 
-    private JDBCOperationStorage(){
-        try {
-            this.connection = DriverManager.getConnection(POSTGRESQL_URL, POSTGRESQL_USER, POSTGRESQL_PASSWORD);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+    private JDBCOperationStorage() {
+        tables.add("operation_sum");
+        tables.add("operation_sub");
+        tables.add("operation_mul");
+        tables.add("operation_div");
     }
 
     public static JDBCOperationStorage getInstance() {
@@ -32,10 +30,13 @@ public class JDBCOperationStorage implements OperationStorage{
         }
         return instance;
     }
+
     @Override
     public void save(Operation operation) {
+        Connection postgresConnection = connectionJDBC.getPostgresConnection();
+        String table = "operation_" + String.valueOf(operation.getType()).toLowerCase();
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(WRITE_OPERATION);
+            PreparedStatement preparedStatement = postgresConnection.prepareStatement("insert into " + table + WRITE_OPERATION);
             preparedStatement.setDouble(1, operation.getNum1());
             preparedStatement.setString(2, String.valueOf(operation.getType()));
             preparedStatement.setDouble(3, operation.getNum2());
@@ -47,27 +48,31 @@ public class JDBCOperationStorage implements OperationStorage{
             throw new RuntimeException(e);
         }
     }
+
     @Override
     public List<Operation> findByUserId(int userId) {
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(SELECT_USER_OPERATIONS);
-            preparedStatement.setInt(1, userId);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            List<Operation> operationList = new ArrayList<>();
-            while (resultSet.next()){
-                int id = resultSet.getInt("id");
-                double num1 = resultSet.getDouble("num1");
-                double num2 = resultSet.getDouble("num2");
-                OperationType type = OperationType.valueOf(resultSet.getString("type"));
-                double result = resultSet.getDouble("result");
-                LocalDateTime time = resultSet.getTimestamp("time").toLocalDateTime();
-                Operation operation = new Operation(id, num1, num2, type, result, userId, time);
-                operationList.add(operation);
+        Connection postgresConnection = connectionJDBC.getPostgresConnection();
+        List<Operation> operationList = new ArrayList<>();
+        for (String table : tables) {
+            try {
+                PreparedStatement preparedStatement = postgresConnection.prepareStatement("select * from " + table + SELECT_USER_OPERATIONS);
+                preparedStatement.setInt(1, userId);
+                ResultSet resultSet = preparedStatement.executeQuery();
+                while (resultSet.next()) {
+                    int id = resultSet.getInt("id");
+                    double num1 = resultSet.getDouble("num1");
+                    double num2 = resultSet.getDouble("num2");
+                    OperationType type = OperationType.valueOf(resultSet.getString("type"));
+                    double result = resultSet.getDouble("result");
+                    LocalDateTime time = resultSet.getTimestamp("time").toLocalDateTime();
+                    Operation operation = new Operation(id, num1, num2, type, result, userId, time);
+                    operationList.add(operation);
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
             }
-            Collections.sort(operationList);
-            return operationList;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         }
+        Collections.sort(operationList);
+        return operationList;
     }
 }
