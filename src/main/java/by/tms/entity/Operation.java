@@ -4,8 +4,8 @@ import java.time.LocalDateTime;
 
 public class Operation implements Comparable<Operation> {
     private int operationId;
-    private double num1;
-    private double num2;
+    private final double num1;
+    private final double num2;
     private double result;
     private OperationType type;
     private int userId;
@@ -30,9 +30,10 @@ public class Operation implements Comparable<Operation> {
         this.time = time;
     }
 
-    public Operation(double num1, double num2, int userId) {
+    public Operation(double num1, double num2, OperationType type, int userId) {
         this.num1 = num1;
         this.num2 = num2;
+        this.type = type;
         this.userId = userId;
     }
 
