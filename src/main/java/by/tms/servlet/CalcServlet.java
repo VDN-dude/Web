@@ -16,7 +16,6 @@ import java.util.Optional;
 
 @WebServlet(name = "CalcServlet", urlPatterns = "/calc")
 public class CalcServlet extends HttpServlet {
-    private double result;
     private int userId;
     private final CalculatorValidator validator = new CalculatorValidator();
     private final CalculatorService calculatorService = CalculatorService.getInstance();
@@ -40,21 +39,10 @@ public class CalcServlet extends HttpServlet {
                 User user = (User) req.getSession().getAttribute("user");
                 userId = user.getUserId();
             }
-            Operation operation = new Operation(dNum1, dNum2, userId);
-            switch (opType){
-                case SUM:
-                    result = calculatorService.calculate(new SumOperation(operation));
-                    break;
-                case SUB:
-                    result = calculatorService.calculate(new SubOperation(operation));
-                    break;
-                case MUL:
-                    result = calculatorService.calculate(new MulOperation(operation));
-                    break;
-                case DIV:
-                    result = calculatorService.calculate(new DivOperation(operation));
-                    break;
-            }
+
+            Operation operation = new Operation(dNum1, dNum2, opType, userId);
+            calculatorService.configure(operation);
+            double result = calculatorService.calculate().getResult();
 
             req.setAttribute("result", result);
             req.getRequestDispatcher("/pages/calc.jsp").forward(req, resp);
