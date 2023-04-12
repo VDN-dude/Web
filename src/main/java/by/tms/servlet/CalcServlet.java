@@ -3,6 +3,7 @@ package by.tms.servlet;
 import by.tms.entity.Operation;
 import by.tms.entity.OperationType;
 import by.tms.entity.User;
+import by.tms.factory.OperationFactory;
 import by.tms.service.*;
 import by.tms.validator.CalculatorValidator;
 
@@ -41,8 +42,9 @@ public class CalcServlet extends HttpServlet {
             }
 
             Operation operation = new Operation(dNum1, dNum2, opType, userId);
-            calculatorService.configure(operation);
-            double result = calculatorService.calculate().get().getResult();
+            CalculatorOperation calculatorOperation = OperationFactory.createOperation(operation).get();
+            double result = calculatorService.calculate(calculatorOperation).get().getResult();
+
 
             req.setAttribute("result", result);
             req.getRequestDispatcher("/pages/calc.jsp").forward(req, resp);

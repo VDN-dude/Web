@@ -9,7 +9,6 @@ import java.util.Optional;
 
 public class JDBCUserStorage implements UserStorage{
     private static JDBCUserStorage instance;
-    private final ConnectionJDBC connectionJDBC = new ConnectionJDBC();
     private static final String SELECT_ALL_USERS = "select * from users";
     private static final String WRITE_USER = "insert into users(firstname, lastname, email, username, password) values (?, ?, ?, ?, ?)";
 
@@ -24,7 +23,7 @@ public class JDBCUserStorage implements UserStorage{
     }
 
     public void save(User user) {
-        Connection postgresConnection = connectionJDBC.getPostgresConnection();
+        Connection postgresConnection = ConnectionJDBC.getPostgresConnection();
         try {
             PreparedStatement preparedStatement = postgresConnection.prepareStatement(WRITE_USER);;
             preparedStatement.setString(1, user.getFirstName());
@@ -39,7 +38,7 @@ public class JDBCUserStorage implements UserStorage{
     }
 
     public Optional<User> findByEmail(String email) {
-        Connection postgresConnection = connectionJDBC.getPostgresConnection();
+        Connection postgresConnection = ConnectionJDBC.getPostgresConnection();
         try {
             Statement statement = postgresConnection.createStatement();
             ResultSet resultSet = statement.executeQuery(SELECT_ALL_USERS);
@@ -62,7 +61,7 @@ public class JDBCUserStorage implements UserStorage{
     }
 
     public boolean checkEmail(String email){
-        Connection postgresConnection = connectionJDBC.getPostgresConnection();
+        Connection postgresConnection = ConnectionJDBC.getPostgresConnection();
         try {
             PreparedStatement preparedStatement = postgresConnection.prepareStatement(SELECT_ALL_USERS + " where email = ?");
             preparedStatement.setString(1, email);
@@ -73,7 +72,7 @@ public class JDBCUserStorage implements UserStorage{
         }
     }
     public boolean checkUsername(String username){
-        Connection postgresConnection = connectionJDBC.getPostgresConnection();
+        Connection postgresConnection = ConnectionJDBC.getPostgresConnection();
         try {
             PreparedStatement preparedStatement = postgresConnection.prepareStatement(SELECT_ALL_USERS + " where username = ?");
             preparedStatement.setString(1, username);

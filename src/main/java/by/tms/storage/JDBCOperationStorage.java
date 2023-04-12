@@ -13,7 +13,6 @@ import java.util.List;
 public class JDBCOperationStorage implements OperationStorage {
     private static JDBCOperationStorage instance;
     private final List<String> tables = new ArrayList<>();
-    private final ConnectionJDBC connectionJDBC = new ConnectionJDBC();
     private static final String SELECT_USER_OPERATIONS = " where userid = ?";
     private static final String WRITE_OPERATION = " (num1, type, num2, result, time, userid) values (?, ?, ?, ?, ?, ?)";
 
@@ -33,7 +32,7 @@ public class JDBCOperationStorage implements OperationStorage {
 
     @Override
     public void save(Operation operation) {
-        Connection postgresConnection = connectionJDBC.getPostgresConnection();
+        Connection postgresConnection = ConnectionJDBC.getPostgresConnection();
         String table = "operation_" + String.valueOf(operation.getType()).toLowerCase();
         try {
             PreparedStatement preparedStatement = postgresConnection.prepareStatement("insert into " + table + WRITE_OPERATION);
@@ -51,7 +50,7 @@ public class JDBCOperationStorage implements OperationStorage {
 
     @Override
     public List<Operation> findByUserId(int userId) {
-        Connection postgresConnection = connectionJDBC.getPostgresConnection();
+        Connection postgresConnection = ConnectionJDBC.getPostgresConnection();
         List<Operation> operationList = new ArrayList<>();
         for (String table : tables) {
             try {
