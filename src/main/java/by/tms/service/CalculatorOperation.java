@@ -1,6 +1,8 @@
 package by.tms.service;
 
+import by.tms.entity.Operation;
+
 public interface CalculatorOperation {
     void process();
-    double getFinalResult();
+    Operation getFinalResult();
 }
