@@ -2,13 +2,10 @@ package by.tms.service;
 
 import by.tms.entity.Operation;
 import by.tms.entity.OperationType;
-import by.tms.storage.JDBCOperationStorage;
-import by.tms.storage.OperationStorage;
 
 import java.time.LocalDateTime;
 
 public class SubOperation implements CalculatorOperation {
-    private final OperationStorage storage = JDBCOperationStorage.getInstance();
     private final Operation operation;
 
     public SubOperation(Operation operation) {
@@ -20,14 +17,10 @@ public class SubOperation implements CalculatorOperation {
         operation.setResult(operation.getNum1() - operation.getNum2());
         operation.setType(OperationType.SUB);
         operation.setTime(LocalDateTime.now());
-        if (operation.getUserId()!= 0){
-            Thread thread = new Thread(() -> storage.save(operation));
-            thread.start();
-        }
     }
 
     @Override
-    public double getFinalResult() {
-        return operation.getResult();
+    public Operation getFinalResult() {
+        return operation;
     }
 }
