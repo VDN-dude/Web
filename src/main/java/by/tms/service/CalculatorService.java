@@ -7,6 +7,7 @@ import by.tms.storage.JDBCOperationStorage;
 import by.tms.storage.OperationStorage;
 
 import java.util.List;
+import java.util.Optional;
 
 public class CalculatorService {
     private Operation operation;
@@ -46,12 +47,12 @@ public class CalculatorService {
         }
 
     }
-    public Operation calculate() {
+    public Optional<Operation> calculate() {
         if (factory != null) {
             factory.executeOperation(operation);
-            return operation;
+            return Optional.ofNullable(operation);
         }
-        return null;
+        return Optional.empty();
     }
 
     public List<Operation> findByUserId(int userId) {
