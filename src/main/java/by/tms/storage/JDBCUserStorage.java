@@ -2,25 +2,19 @@ package by.tms.storage;
 
 
 import by.tms.entity.User;
+import by.tms.util.ConnectionJDBC;
 
 import java.sql.*;
 import java.util.Optional;
 
 public class JDBCUserStorage implements UserStorage{
     private static JDBCUserStorage instance;
-    private final Connection connection;
-    private static final String POSTGRESQL_USER = "postgres";
-    private static final String POSTGRESQL_URL = "jdbc:postgresql://localhost:5432/postgres";
-    private static final String POSTGRESQL_PASSWORD = "0314";
+    private final ConnectionJDBC connectionJDBC = new ConnectionJDBC();
     private static final String SELECT_ALL_USERS = "select * from users";
     private static final String WRITE_USER = "insert into users(firstname, lastname, email, username, password) values (?, ?, ?, ?, ?)";
 
     private JDBCUserStorage() {
-        try {
-            this.connection = DriverManager.getConnection(POSTGRESQL_URL, POSTGRESQL_USER, POSTGRESQL_PASSWORD);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+
     }
     public static JDBCUserStorage getInstance(){
         if (instance == null){
@@ -30,8 +24,9 @@ public class JDBCUserStorage implements UserStorage{
     }
 
     public void save(User user) {
+        Connection postgresConnection = connectionJDBC.getPostgresConnection();
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(WRITE_USER);;
+            PreparedStatement preparedStatement = postgresConnection.prepareStatement(WRITE_USER);;
             preparedStatement.setString(1, user.getFirstName());
             preparedStatement.setString(2, user.getLastName());
             preparedStatement.setString(3, user.getEmail());
@@ -44,8 +39,9 @@ public class JDBCUserStorage implements UserStorage{
     }
 
     public Optional<User> findByEmail(String email) {
+        Connection postgresConnection = connectionJDBC.getPostgresConnection();
         try {
-            Statement statement = connection.createStatement();
+            Statement statement = postgresConnection.createStatement();
             ResultSet resultSet = statement.executeQuery(SELECT_ALL_USERS);
             while(resultSet.next()){
                 if(resultSet.getString("email").equals(email)){
@@ -66,8 +62,9 @@ public class JDBCUserStorage implements UserStorage{
     }
 
     public boolean checkEmail(String email){
+        Connection postgresConnection = connectionJDBC.getPostgresConnection();
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_USERS + " where email = ?");
+            PreparedStatement preparedStatement = postgresConnection.prepareStatement(SELECT_ALL_USERS + " where email = ?");
             preparedStatement.setString(1, email);
             ResultSet resultSet = preparedStatement.executeQuery();
             return resultSet.next();
@@ -76,8 +73,9 @@ public class JDBCUserStorage implements UserStorage{
         }
     }
     public boolean checkUsername(String username){
+        Connection postgresConnection = connectionJDBC.getPostgresConnection();
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_USERS + " where username = ?");
+            PreparedStatement preparedStatement = postgresConnection.prepareStatement(SELECT_ALL_USERS + " where username = ?");
             preparedStatement.setString(1, username);
             ResultSet resultSet = preparedStatement.executeQuery();
             return resultSet.next();
