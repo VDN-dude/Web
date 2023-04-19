@@ -17,7 +17,7 @@ import java.util.Optional;
 
 @WebServlet(name = "CalcServlet", urlPatterns = "/calc")
 public class CalcServlet extends HttpServlet {
-    private int userId;
+    private User user;
     private final CalculatorValidator validator = new CalculatorValidator();
     private final CalculatorService calculatorService = CalculatorService.getInstance();
 
@@ -37,11 +37,10 @@ public class CalcServlet extends HttpServlet {
             double dNum2 = Double.parseDouble(num2);
             OperationType opType = OperationType.valueOf(type.toUpperCase());
             if (req.getSession().getAttribute("user") != null) {
-                User user = (User) req.getSession().getAttribute("user");
-                userId = user.getUserId();
+                user = (User) req.getSession().getAttribute("user");
             }
 
-            Operation operation = new Operation(dNum1, dNum2, opType, userId);
+            Operation operation = new Operation(dNum1, dNum2, opType, user);
             CalculatorOperation calculatorOperation = OperationFactory.createOperation(operation).get();
             double result = calculatorService.calculate(calculatorOperation).get().getResult();
 
