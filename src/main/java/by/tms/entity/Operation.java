@@ -8,16 +8,16 @@ public class Operation implements Comparable<Operation> {
     private final double num2;
     private double result;
     private OperationType type;
-    private int userId;
+    private User user;
     private LocalDateTime time;
 
-    public Operation(int operationId, double num1, double num2, OperationType type, double result, int userId, LocalDateTime time) {
+    public Operation(int operationId, double num1, double num2, OperationType type, double result, User user, LocalDateTime time) {
         this.operationId = operationId;
         this.num1 = num1;
         this.num2 = num2;
         this.result = result;
         this.type = type;
-        this.userId = userId;
+        this.user = user;
         this.time = time;
     }
 
@@ -30,11 +30,11 @@ public class Operation implements Comparable<Operation> {
         this.time = time;
     }
 
-    public Operation(double num1, double num2, OperationType type, int userId) {
+    public Operation(double num1, double num2, OperationType type, User user) {
         this.num1 = num1;
         this.num2 = num2;
         this.type = type;
-        this.userId = userId;
+        this.user = user;
     }
 
     public double getNum1() {
@@ -53,8 +53,8 @@ public class Operation implements Comparable<Operation> {
         return type;
     }
 
-    public int getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
     public LocalDateTime getTime() {
@@ -82,7 +82,7 @@ public class Operation implements Comparable<Operation> {
                 ", num2=" + num2 +
                 ", result=" + result +
                 ", type=" + type +
-                ", userId=" + userId +
+                ", user=" + user +
                 ", time=" + time +
                 '}';
     }

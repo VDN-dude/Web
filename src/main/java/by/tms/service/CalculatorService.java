@@ -2,6 +2,7 @@ package by.tms.service;
 
 
 import by.tms.entity.Operation;
+import by.tms.entity.User;
 import by.tms.storage.JDBCOperationStorage;
 import by.tms.storage.OperationStorage;
 
@@ -25,12 +26,14 @@ public class CalculatorService {
 
     public Optional<Operation> calculate(CalculatorOperation operation) {
         operation.process();
-        storage.save(operation.getFinalResult());
+        if (operation.getFinalResult().getUser() != null) {
+            storage.save(operation.getFinalResult());
+        }
         return Optional.ofNullable(operation.getFinalResult());
     }
 
-    public List<Operation> findByUserId(int userId) {
-        return storage.findByUserId(userId);
+    public List<Operation> findByUserId(User user) {
+        return storage.findByUser(user);
     }
 
 }

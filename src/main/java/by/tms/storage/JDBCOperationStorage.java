@@ -2,6 +2,7 @@ package by.tms.storage;
 
 import by.tms.entity.Operation;
 import by.tms.entity.OperationType;
+import by.tms.entity.User;
 import by.tms.util.ConnectionJDBC;
 
 import java.sql.*;
@@ -41,7 +42,7 @@ public class JDBCOperationStorage implements OperationStorage {
             preparedStatement.setDouble(3, operation.getNum2());
             preparedStatement.setDouble(4, operation.getResult());
             preparedStatement.setTimestamp(5, Timestamp.valueOf(operation.getTime()));
-            preparedStatement.setInt(6, operation.getUserId());
+            preparedStatement.setInt(6, operation.getUser().getUserId());
             preparedStatement.execute();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -49,13 +50,13 @@ public class JDBCOperationStorage implements OperationStorage {
     }
 
     @Override
-    public List<Operation> findByUserId(int userId) {
+    public List<Operation> findByUser(User user) {
         Connection postgresConnection = ConnectionJDBC.getPostgresConnection();
         List<Operation> operationList = new ArrayList<>();
         for (String table : tables) {
             try {
                 PreparedStatement preparedStatement = postgresConnection.prepareStatement("select * from " + table + SELECT_USER_OPERATIONS);
-                preparedStatement.setInt(1, userId);
+                preparedStatement.setInt(1, user.getUserId());
                 ResultSet resultSet = preparedStatement.executeQuery();
                 while (resultSet.next()) {
                     int id = resultSet.getInt("id");
@@ -64,7 +65,7 @@ public class JDBCOperationStorage implements OperationStorage {
                     OperationType type = OperationType.valueOf(resultSet.getString("type"));
                     double result = resultSet.getDouble("result");
                     LocalDateTime time = resultSet.getTimestamp("time").toLocalDateTime();
-                    Operation operation = new Operation(id, num1, num2, type, result, userId, time);
+                    Operation operation = new Operation(id, num1, num2, type, result, user, time);
                     operationList.add(operation);
                 }
             } catch (SQLException e) {
