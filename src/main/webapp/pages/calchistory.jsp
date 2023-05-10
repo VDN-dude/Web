@@ -19,7 +19,7 @@
 <div class="container">
     <div class="row justify-text-center">
         <ul>
-            <c:forEach items="${operationList}" var="operation">
+            <c:forEach items="${operationList}" var="operation" end="4">
                 <fmt:parseDate value="${operation.time}" var="parsedTime" pattern="yyyy-MM-dd'T'HH:mm" type="date"/>
                 <fmt:formatDate value="${parsedTime}" pattern="dd.MM.yyyy HH:mm" var="formattedTime"/>
                 <li>
@@ -27,6 +27,16 @@
                 </li>
             </c:forEach>
         </ul>
+        <c:if test="${offset != 0}">
+            <form action="/calchistory" method="post">
+                    <button name="offset" type="submit" value="${offset-5}">&laquo;</button>
+            </form>
+        </c:if>
+        <c:if test="${size == 6}">
+            <form action="/calchistory" method="post">
+                    <button name="offset" type="submit" value="${offset+5}">&raquo;</button>
+            </form>
+        </c:if>
     </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/js/bootstrap.bundle.min.js"

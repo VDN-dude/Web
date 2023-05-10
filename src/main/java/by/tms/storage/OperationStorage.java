@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface OperationStorage {
     void save(Operation operation);
-    List<Operation> findByUser(User user);
+    List<Operation> findByUser(User user, int paginationOffset);
 }

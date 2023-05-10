@@ -32,8 +32,8 @@ public class CalculatorService {
         return Optional.ofNullable(operation.getFinalResult());
     }
 
-    public List<Operation> findByUserId(User user) {
-        return storage.findByUser(user);
+    public List<Operation> findByUserId(User user, int paginationOffset) {
+        return storage.findByUser(user, paginationOffset);
     }
 
 }

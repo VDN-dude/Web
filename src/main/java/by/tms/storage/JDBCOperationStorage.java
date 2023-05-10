@@ -14,7 +14,7 @@ import java.util.List;
 public class JDBCOperationStorage implements OperationStorage {
     private static JDBCOperationStorage instance;
     private final List<String> tables = new ArrayList<>();
-    private static final String SELECT_USER_OPERATIONS = " where userid = ?";
+    private static final String SELECT_USER_OPERATIONS = "select * from operation_sum where userid = ? order by time desc limit 6 offset ?";
     private static final String WRITE_OPERATION = " (num1, type, num2, result, time, userid) values (?, ?, ?, ?, ?, ?)";
 
     private JDBCOperationStorage() {
@@ -42,7 +42,7 @@ public class JDBCOperationStorage implements OperationStorage {
             preparedStatement.setDouble(3, operation.getNum2());
             preparedStatement.setDouble(4, operation.getResult());
             preparedStatement.setTimestamp(5, Timestamp.valueOf(operation.getTime()));
-            preparedStatement.setInt(6, operation.getUser().getUserId());
+            preparedStatement.setInt(6, operation.getUser().getId());
             preparedStatement.execute();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -50,13 +50,14 @@ public class JDBCOperationStorage implements OperationStorage {
     }
 
     @Override
-    public List<Operation> findByUser(User user) {
+    public List<Operation> findByUser(User user, int paginationOffset) {
         Connection postgresConnection = ConnectionJDBC.getPostgresConnection();
         List<Operation> operationList = new ArrayList<>();
-        for (String table : tables) {
+//        for (String table : tables) {
             try {
-                PreparedStatement preparedStatement = postgresConnection.prepareStatement("select * from " + table + SELECT_USER_OPERATIONS);
-                preparedStatement.setInt(1, user.getUserId());
+                PreparedStatement preparedStatement = postgresConnection.prepareStatement(SELECT_USER_OPERATIONS);
+                preparedStatement.setInt(1, user.getId());
+                preparedStatement.setInt(2,paginationOffset);
                 ResultSet resultSet = preparedStatement.executeQuery();
                 while (resultSet.next()) {
                     int id = resultSet.getInt("id");
@@ -71,7 +72,7 @@ public class JDBCOperationStorage implements OperationStorage {
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-        }
+//        }
         Collections.sort(operationList);
         return operationList;
     }

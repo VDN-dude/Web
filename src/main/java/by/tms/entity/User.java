@@ -1,7 +1,7 @@
 package by.tms.entity;
 
 public class User {
-    private int userId;
+    private int id;
     private final String firstName;
     private final String lastName;
     private final String username;
@@ -16,8 +16,8 @@ public class User {
         this.password = password;
     }
 
-    public User(int userId, String firstName, String lastName, String username, String email, String password) {
-        this.userId = userId;
+    public User(int id, String firstName, String lastName, String username, String email, String password) {
+        this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
@@ -25,8 +25,8 @@ public class User {
         this.password = password;
     }
 
-    public int getUserId() {
-        return userId;
+    public int getId() {
+        return id;
     }
 
     public String getFirstName() {
@@ -52,7 +52,7 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
-                "userId='" + userId + '\'' +
+                "userId='" + id + '\'' +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", username='" + username + '\'' +
